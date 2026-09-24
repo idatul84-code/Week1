@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HBT102 — Week 1: Introduction to Basic Interpreting Skills</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&display=swap');
+
+  :root{
+    --navy:#1E2761; --navy-deep:#141B49; --ice:#CADCFC; --ice-soft:#EEF3FD;
+    --paper:#FFFFFF; --text:#1B2140; --text-muted:#5B6280; --border:#E3E8F5; --card:#F7F9FE;
+    --good:#1F7A4C; --good-bg:#EAF7EF; --bad:#B3261E; --bad-bg:#FDECEC;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --navy:#3446A0; --navy-deep:#10143A; --ice:#9FB6EC; --ice-soft:#1B2250;
+      --paper:#0D1130; --text:#ECEFFB; --text-muted:#A6ADD1; --border:#2B3266; --card:#161B40;
+      --good:#5FD394; --good-bg:#132A20; --bad:#F28B82; --bad-bg:#2E1616;
+    }
+  }
+  :root[data-theme="dark"]{
+    --navy:#3446A0; --navy-deep:#10143A; --ice:#9FB6EC; --ice-soft:#1B2250;
+    --paper:#0D1130; --text:#ECEFFB; --text-muted:#A6ADD1; --border:#2B3266; --card:#161B40;
+    --good:#5FD394; --good-bg:#132A20; --bad:#F28B82; --bad-bg:#2E1616;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; font-size:18px; }
+  body{
+    margin:0; background:var(--paper); color:var(--text);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    line-height:1.65;
+  }
+  h1,h2,h3{ font-family:"Source Serif 4",Georgia,"Times New Roman",serif; margin:0; }
+  a{ color:var(--navy); }
+  :root[data-theme="dark"] a{ color:var(--ice); }
+  button{ font-family:inherit; }
+
+  /* ---------- Top bar / progress ---------- */
+  .topbar{ position:sticky; top:0; z-index:50; background:var(--navy-deep); color:#fff; padding:1rem 1.25rem; }
+  .topbar-inner{ max-width:760px; margin:0 auto; }
+  .course-line{ font-size:0.85rem; color:var(--ice); }
+  .lecture-title{ font-size:1.35rem; font-weight:700; margin-top:0.2rem; }
+  .progress-row{ display:flex; align-items:center; gap:0.75rem; margin-top:0.85rem; font-size:0.8rem; color:var(--ice); }
+  .progress-track{ flex:1; height:6px; background:rgba(255,255,255,0.18); border-radius:99px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--ice); width:6.6%; transition:width 0.3s ease; }
+
+  /* ---------- Layout ---------- */
+  main{ max-width:760px; margin:0 auto; padding:2.5rem 1.25rem 4rem; }
+
+  .lecture-section{ display:none; animation:fade 0.25s ease; }
+  .lecture-section.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+  .sec-eyebrow{ font-size:0.85rem; font-weight:700; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.5rem; }
+  .sec-title{ font-size:1.85rem; color:var(--navy); margin-bottom:0.6rem; }
+  :root[data-theme="dark"] .sec-title{ color:var(--ice); }
+  .sec-intro{ color:var(--text-muted); margin-bottom:1.6rem; max-width:60ch; font-size:1.05rem; }
+  .subhead{ font-family:"Inter",sans-serif; font-size:1.05rem; font-weight:700; color:var(--navy); margin:1.8rem 0 0.7rem; }
+  .subhead:first-child{ margin-top:0; }
+
+  /* ---------- Generic components ---------- */
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.4rem 1.5rem; margin-bottom:1.1rem; }
+  .callout{ border:1px solid #A9C285; background:#CAE3B5; border-radius:10px; padding:1.1rem 1.3rem; margin:1.5rem 0 0; }
+  .intro-callout{
+    background:#EFEBFB; border:1px solid #D9CFF0; border-radius:12px;
+    padding:0.9rem 1.2rem; margin-bottom:1.5rem;
+    box-shadow:0 2px 8px rgba(90,70,150,0.08);
+  }
+  .intro-callout h4{ margin:0 0 0.35rem; font-size:0.92rem; color:#4A3B7A; font-family:"Inter",sans-serif; }
+  .intro-callout p{ margin:0; font-size:0.9rem; color:#4A3B7A; line-height:1.55; }
+  .intro-callout.on-dark{
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18);
+    box-shadow:none; margin:0.9rem 0 0;
+  }
+  .intro-callout.on-dark h4{ color:var(--ice); }
+  .intro-callout.on-dark p{ color:rgba(255,255,255,0.88); }
+  .callout h4{ font-size:0.95rem; color:#2E4A1E; margin-bottom:0.4rem; }
+  .callout p{ color:#2E4A1E; margin:0; font-size:0.92rem; }
+
+  ul.outcome-list{ list-style:none; margin:0; padding:0; }
+  ul.outcome-list li{ display:flex; gap:0.7rem; align-items:flex-start; padding:0.7rem 0; border-bottom:1px solid var(--border); font-size:1rem; }
+  ul.outcome-list li:last-child{ border-bottom:none; }
+  ul.plain-list{ list-style:none; margin:0; padding:0; }
+  ul.plain-list li{ padding:0.7rem 0; border-bottom:1px solid var(--border); font-size:1rem; line-height:1.6; }
+  ul.plain-list li:last-child{ border-bottom:none; }
+  .co-tag{
+    flex:none; background:var(--navy); color:#fff; font-size:0.72rem; font-weight:700; letter-spacing:0.03em;
+    padding:0.2rem 0.55rem; border-radius:99px; margin-top:0.15rem;
+  }
+  :root[data-theme="dark"] .co-tag{ background:var(--ice); color:var(--navy-deep); }
+  .outcome-text{ flex:1; }
+
+  /* Accordion */
+  .accordion{ border:1px solid var(--border); border-radius:10px; margin-bottom:0.7rem; overflow:hidden; }
+  .accordion-trigger{
+    width:100%; text-align:left; background:var(--card); border:none; padding:1rem 1.2rem;
+    display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-size:1rem; font-weight:600; color:var(--text);
+  }
+  .accordion-trigger .arrow{ transition:transform 0.2s ease; color:var(--navy); flex:none; font-size:0.9rem; }
+  :root[data-theme="dark"] .accordion-trigger .arrow{ color:var(--ice); }
+  .accordion.open .accordion-trigger .arrow{ transform:rotate(180deg); }
+  .accordion-panel{ max-height:0; overflow:hidden; transition:max-height 0.25s ease; background:var(--paper); }
+  .accordion.open .accordion-panel{ max-height:500px; }
+  .accordion-panel-inner{ padding:0 1.2rem 1.1rem; font-size:0.95rem; color:var(--text-muted); }
+  .accordion-panel-inner .eg{ margin-top:0.6rem; padding:0.7rem 0.9rem; background:var(--ice-soft); border-radius:8px; font-style:italic; color:var(--text); }
+
+  /* Process diagram */
+  .process-row{ display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; margin:1.4rem 0; }
+  .process-step{
+    background:var(--navy); color:#fff; border:none; border-radius:10px; padding:0.85rem 1rem;
+    font-size:0.9rem; font-weight:600; cursor:pointer; flex:1 1 130px; text-align:center;
+  }
+  .process-step:hover{ opacity:0.9; }
+  .process-step.step-color-1,
+  .process-step.step-color-2,
+  .process-step.step-color-3,
+  .process-step.step-color-4,
+  .process-step.step-color-5{ background:#DADA01; color:var(--navy-deep); }
+  .process-arrow{ color:var(--text-muted); font-size:1.1rem; flex:0 0 auto; }
+  .process-explain{ display:none; background:var(--ice-soft); border:1px solid var(--ice); border-radius:10px; padding:0.9rem 1.1rem; font-size:0.92rem; margin-top:0.9rem; }
+  .process-explain.shown{ display:block; }
+
+  /* Buttons */
+  .btn{
+    display:inline-flex; align-items:center; gap:0.4rem; background:var(--navy); color:#fff; border:none;
+    padding:0.65rem 1.15rem; border-radius:8px; font-size:0.92rem; font-weight:600; cursor:pointer; transition:opacity 0.15s ease;
+  }
+  .btn:hover{ opacity:0.88; }
+  .btn:focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+  .btn.secondary{ background:none; border:1.5px solid var(--navy); color:var(--navy); }
+  :root[data-theme="dark"] .btn.secondary{ border-color:var(--ice); color:var(--ice); }
+  .btn[disabled]{ opacity:0.5; cursor:default; }
+  .btn.reveal-btn{ background:#F99FAB; color:#3A0F17; }
+  .btn.reveal-btn:hover{ opacity:0.85; }
+  .start-practice-btn{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    background:linear-gradient(135deg, var(--ice-soft), var(--ice));
+    border:2px dashed var(--navy); color:var(--navy);
+    padding:0.65rem 1.25rem; border-radius:999px; font-size:0.92rem; font-weight:700;
+    cursor:not-allowed; opacity:0.85;
+  }
+  :root[data-theme="dark"] .start-practice-btn{ border-color:var(--ice); color:var(--ice); }
+  .start-practice-btn .mic{ font-size:1.05rem; }
+
+  /* Completion popup (small floating tooltip above the button) */
+  .completion-popup{
+    position:absolute; bottom:100%; transform:translateX(-50%) translateY(6px);
+    margin-bottom:0.6rem;
+    background:transparent; color:var(--navy); font-size:0.92rem; font-weight:700;
+    padding:0; white-space:nowrap;
+    opacity:0; transition:opacity 0.2s ease, transform 0.2s ease;
+    pointer-events:none; z-index:20;
+  }
+  .completion-popup.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* Next Class closing card */
+  .next-class-card{
+    display:flex; align-items:center; gap:1rem;
+    background:#C1E1EB; color:#12414D;
+    border-radius:14px; padding:1.1rem 1.4rem; margin-top:2rem;
+  }
+  .next-class-card .icon{
+    flex:none; width:44px; height:44px; border-radius:50%;
+    background:rgba(18,65,77,0.12); display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem;
+  }
+  .next-class-card .label{ font-size:0.72rem; font-weight:700; letter-spacing:0.08em; color:#12414D; margin-bottom:0.2rem; }
+  .next-class-card p{ margin:0; font-size:0.95rem; color:#12414D; }
+
+  /* Compact quick-navigation dropdown */
+  .page-layout{ max-width:760px; margin:0 auto; }
+  .quick-nav-wrap{
+    display:flex; justify-content:flex-end; align-items:center; gap:0.5rem;
+    margin:1.75rem 0 0; padding:0 1.25rem;
+  }
+  .quick-nav-pill{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    background:#EEF3FD; border:1px solid #CADCFC; border-radius:999px;
+    padding:0.5rem 0.6rem 0.5rem 1rem;
+    box-shadow:0 2px 6px rgba(30,39,97,0.08);
+    transition:box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .quick-nav-pill:hover{ box-shadow:0 3px 9px rgba(30,39,97,0.14); border-color:#B8A9D9; }
+  .quick-nav-pill:focus-within{ outline:2px solid #1E2761; outline-offset:2px; }
+  .quick-nav-icon{ font-size:0.9rem; flex:none; }
+  .quick-nav-select{
+    appearance:none; -webkit-appearance:none; border:none; background:transparent;
+    font-family:"Inter",sans-serif; font-size:0.86rem; font-weight:600; color:#1E2761;
+    padding:0.15rem 1.4rem 0.15rem 0.2rem; cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%231E2761'><path d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='%231E2761' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat; background-position:right 0 center; background-size:16px;
+  }
+  .quick-nav-select:focus{ outline:none; }
+
+
+  /* Reveal blocks */
+  .reveal-target{ display:none; margin-top:1rem; }
+  .reveal-target.shown{ display:block; }
+  .answer-box{ background:var(--ice-soft); border:1px solid var(--ice); border-radius:10px; padding:1.1rem 1.3rem; }
+  .answer-box .label{ font-size:0.72rem; font-weight:700; letter-spacing:0.05em; color:var(--navy); display:block; margin-bottom:0.5rem; }
+  :root[data-theme="dark"] .answer-box .label{ color:var(--ice); }
+
+  /* Example / Try it / Worked example */
+  .source-block{ background:var(--navy); color:#fff; border-radius:10px; padding:1.1rem 1.3rem; margin-bottom:1.1rem; }
+  .source-block .tag{ font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--ice); display:block; margin-bottom:0.5rem; }
+  .source-block p{ margin:0; font-size:1.05rem; }
+  textarea.response{
+    width:100%; min-height:75px; padding:0.8rem; border-radius:8px; border:1px solid var(--border);
+    font-family:inherit; font-size:0.95rem; resize:vertical; background:var(--paper); color:var(--text);
+  }
+  textarea.response:focus-visible{ outline:2px solid var(--navy); }
+  .task-label{ font-weight:700; font-size:0.9rem; color:var(--text); margin:0 0 0.5rem; }
+
+  /* Listening activity */
+  .listen-block{ display:flex; align-items:center; gap:0.9rem; flex-wrap:wrap; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem 1.2rem; }
+  .listen-btn{ background:var(--navy); flex:none; }
+  .listen-btn.playing{ opacity:0.7; }
+  .listen-hint{ font-size:0.85rem; color:var(--text-muted); }
+
+  /* Highlightable text */
+  .hl-text{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.1rem 1.3rem; font-size:1.02rem; line-height:1.9; }
+  .hl-word{ cursor:pointer; border-radius:4px; padding:0 2px; transition:background 0.1s ease; }
+  .hl-word:hover{ background:var(--ice-soft); }
+  .hl-word.marked{ background:var(--ice); }
+  :root[data-theme="dark"] .hl-word.marked{ background:#3B4790; }
+
+  /* Toggle switch (Hard/Soft skills) */
+  .toggle-switch{
+    display:inline-flex; background:var(--card); border:1px solid var(--border); border-radius:99px;
+    padding:0.25rem; margin-bottom:1.3rem; gap:0.2rem;
+  }
+  .toggle-btn{
+    border:none; background:none; padding:0.55rem 1.2rem; border-radius:99px; font-size:0.9rem; font-weight:600;
+    color:var(--text-muted); cursor:pointer; transition:all 0.15s ease;
+  }
+  .toggle-btn.active{ background:var(--navy); color:#fff; }
+  .toggle-btn:focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+
+  /* Toggle list (detailed, individually expandable skills) */
+  .toggle-item{ border:1px solid var(--border); border-radius:10px; margin-bottom:0.7rem; overflow:hidden; }
+  .toggle-item-trigger{
+    width:100%; text-align:left; background:var(--card); border:none; padding:0.95rem 1.15rem;
+    display:flex; justify-content:space-between; align-items:center; cursor:pointer; gap:0.8rem;
+  }
+  .toggle-item-trigger .name{ font-size:1rem; font-weight:600; color:var(--text); }
+  .toggle-item-trigger .arrow{ color:var(--navy); flex:none; transition:transform 0.2s ease; font-size:0.9rem; }
+  :root[data-theme="dark"] .toggle-item-trigger .arrow{ color:var(--ice); }
+  .toggle-item.open .toggle-item-trigger .arrow{ transform:rotate(180deg); }
+  .toggle-item-panel{ max-height:0; overflow:hidden; transition:max-height 0.25s ease; background:var(--paper); }
+  .toggle-item.open .toggle-item-panel{ max-height:300px; }
+  .toggle-item-panel-inner{ padding:0 1.15rem 1rem; font-size:0.92rem; color:var(--text-muted); }
+
+  /* Quiz */
+  .quiz-card{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+  .quiz-progress{ font-size:0.8rem; color:var(--text-muted); margin-bottom:0.6rem; }
+  .quiz-q{ font-size:1.08rem; font-weight:600; margin-bottom:1.1rem; }
+  .quiz-options{ display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.1rem; }
+  .quiz-opt{
+    text-align:left; padding:0.75rem 1rem; border-radius:8px; border:1.5px solid var(--border); background:var(--paper);
+    cursor:pointer; font-size:0.95rem; color:var(--text);
+  }
+  .quiz-opt:hover{ border-color:var(--navy); }
+  :root[data-theme="dark"] .quiz-opt:hover{ border-color:var(--ice); }
+  .quiz-opt.correct{ border-color:var(--good); background:var(--good-bg); color:var(--good); font-weight:600; }
+  .quiz-opt.incorrect{ border-color:var(--bad); background:var(--bad-bg); color:var(--bad); font-weight:600; }
+  .quiz-opt[disabled]{ cursor:default; }
+  .quiz-feedback{ font-size:0.92rem; padding:0.9rem 1rem; border-radius:8px; margin-bottom:1.1rem; display:none; }
+  .quiz-feedback.show{ display:block; }
+  .quiz-feedback.good{ background:var(--good-bg); color:var(--good); }
+  .quiz-feedback.bad{ background:var(--bad-bg); color:var(--bad); }
+  .quiz-score{ text-align:center; padding:2rem 1rem; }
+  .quiz-score .num{ font-size:3rem; font-weight:700; color:var(--navy); font-family:"Source Serif 4",serif; }
+  :root[data-theme="dark"] .quiz-score .num{ color:var(--ice); }
+
+  /* Matching activity */
+  .match-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .term-list{ display:flex; flex-direction:column; gap:0.5rem; }
+  .term-chip{
+    padding:0.65rem 0.9rem; background:var(--navy); color:#fff; border-radius:8px; cursor:grab;
+    font-size:0.9rem; font-weight:600; user-select:none;
+  }
+  .term-chip.used{ opacity:0.35; cursor:default; }
+  .dropzone-list{ display:flex; flex-direction:column; gap:0.5rem; }
+  .dropzone{
+    min-height:52px; border:2px dashed var(--border); border-radius:8px; padding:0.6rem 0.9rem;
+    font-size:0.86rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.3rem; justify-content:center;
+  }
+  .dropzone.filled{ border-style:solid; background:var(--ice-soft); color:var(--text); }
+  .dropzone.correct{ border-color:var(--good); background:var(--good-bg); }
+  .dropzone.incorrect{ border-color:var(--bad); background:var(--bad-bg); }
+  .dropzone .def{ font-size:0.84rem; }
+  .dropzone select{ margin-top:0.35rem; font-size:0.8rem; padding:0.3rem; border-radius:6px; border:1px solid var(--border); background:var(--paper); color:var(--text); }
+  .assigned-label{ font-weight:700; font-size:0.8rem; }
+
+  /* Sequencing */
+  .seq-list{ display:flex; flex-direction:column; gap:0.5rem; }
+  .seq-item{
+    display:flex; align-items:center; gap:0.8rem; background:var(--card); border:1px solid var(--border);
+    border-radius:8px; padding:0.7rem 0.9rem;
+  }
+  .seq-item.correct{ border-color:var(--good); background:var(--good-bg); }
+  .seq-item.incorrect{ border-color:var(--bad); background:var(--bad-bg); }
+  .seq-num{ font-family:"Source Serif 4",serif; font-weight:700; color:var(--navy); width:1.4rem; }
+  :root[data-theme="dark"] .seq-num{ color:var(--ice); }
+  .seq-text{ flex:1; font-size:0.95rem; }
+  .seq-btns{ display:flex; gap:0.3rem; }
+  .seq-btns button{ background:none; border:1px solid var(--border); border-radius:6px; width:28px; height:28px; cursor:pointer; color:var(--text); }
+  .seq-btns button:hover{ border-color:var(--navy); }
+
+  /* Self-check + reflection */
+  .confidence-row{ display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:0.8rem; }
+  .confidence-opt{
+    flex:1 1 140px; padding:0.8rem; border-radius:10px; border:1.5px solid var(--border); background:var(--paper);
+    cursor:pointer; text-align:center; font-size:0.9rem; color:var(--text);
+  }
+  .confidence-opt:hover{ border-color:var(--navy); }
+  .confidence-opt.picked{ border-color:var(--navy); background:var(--ice-soft); font-weight:600; }
+  :root[data-theme="dark"] .confidence-opt.picked{ border-color:var(--ice); }
+
+  .takeaway-list{ list-style:none; padding:0; margin:0; }
+  .takeaway-list li{ display:flex; gap:0.7rem; padding:0.55rem 0; font-size:0.95rem; }
+  .takeaway-list li::before{ content:"✓"; color:var(--good); font-weight:700; flex:none; }
+
+  /* Self-check (for Try It Yourself answer boxes) */
+  .self-check{ margin-top:1rem; }
+  .self-check .sc-label{ font-size:0.86rem; font-weight:600; color:var(--text); margin-bottom:0.5rem; }
+  .self-check .sc-row{ display:flex; gap:0.5rem; flex-wrap:wrap; }
+  .self-check .sc-opt{
+    flex:1 1 120px; padding:0.6rem 0.7rem; border-radius:8px; border:1.5px solid var(--border); background:var(--paper);
+    cursor:pointer; text-align:center; font-size:0.85rem; font-weight:600; color:var(--text);
+  }
+  .self-check .sc-opt:hover{ border-color:var(--navy); }
+  .self-check .sc-opt.picked{ border-color:var(--navy); background:var(--ice-soft); }
+  :root[data-theme="dark"] .self-check .sc-opt.picked{ border-color:var(--ice); }
+  .self-check .sc-feedback{ margin-top:0.7rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.88rem; display:none; }
+  .self-check .sc-feedback.show{ display:block; }
+  .self-check .sc-feedback.good{ background:var(--good-bg); color:var(--good); }
+  .self-check .sc-feedback.mid{ background:var(--ice-soft); color:var(--navy); }
+  :root[data-theme="dark"] .self-check .sc-feedback.mid{ color:var(--ice); }
+  .self-check .sc-feedback.low{ background:var(--bad-bg); color:var(--bad); }
+
+  /* Nav */
+  .step-nav{ position:relative; display:flex; justify-content:space-between; margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+
+  @media (max-width:640px){
+    .lecture-title{ font-size:1.05rem; }
+    .process-row{ flex-direction:column; align-items:stretch; }
+    .process-arrow{ text-align:center; transform:rotate(90deg); }
+    .match-wrap{ grid-template-columns:1fr; }
+  }
+
+  /* ---------------- Paraphrasing quiz ---------------- */
+  .para-quiz-wrap{ margin-top:1.25rem; }
+  .para-progress-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:0.65rem; }
+  .para-progress-label{ font-size:0.78rem; font-weight:700; letter-spacing:0.05em; color:var(--text-muted); text-transform:uppercase; }
+  .para-progress-track{ height:7px; background:var(--ice-soft); border-radius:99px; overflow:hidden; margin-bottom:1rem; }
+  .para-progress-fill{ height:100%; width:0%; background:var(--navy); border-radius:99px; transition:width .3s ease; }
+  .para-quiz-card{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.35rem 1.4rem; }
+  .para-question-number{ display:inline-flex; align-items:center; justify-content:center; min-width:2.15rem; height:2.15rem; padding:0 0.55rem; border-radius:99px; background:var(--navy); color:#fff; font-size:0.78rem; font-weight:700; letter-spacing:0.03em; margin-bottom:0.9rem; }
+  .para-source{ background:var(--navy); color:#fff; border-radius:10px; padding:1rem 1.1rem; margin-bottom:1rem; line-height:1.6; }
+  .para-source .tag{ display:block; color:var(--ice); font-size:0.7rem; font-weight:700; letter-spacing:0.07em; margin-bottom:0.4rem; }
+  .para-source p{ margin:0; font-size:1rem; }
+  .para-instruction{ color:var(--text-muted); font-size:0.9rem; margin:0 0 0.85rem; }
+  .para-options{ display:grid; gap:0.65rem; }
+  .para-options button{ width:100%; text-align:left; border:1px solid var(--border); background:var(--paper); color:var(--text); border-radius:10px; padding:0.85rem 0.95rem; cursor:pointer; font:inherit; line-height:1.5; transition:border-color .15s ease, background .15s ease, transform .15s ease; }
+  .para-options button:hover:not(:disabled){ border-color:var(--navy); transform:translateY(-1px); }
+  .para-options button:disabled{ cursor:default; }
+  .para-options button.correct{ border-color:#A9C285; background:#F1FDCE; color:#2E4A1E; font-weight:600; }
+  .para-options button.incorrect{ border-color:#E3A3A3; background:#FFF0F0; color:#7A2E2E; }
+  .para-feedback{ display:none; margin-top:0.9rem; padding:0.8rem 0.95rem; border-radius:9px; font-size:0.9rem; line-height:1.5; }
+  .para-feedback.show{ display:block; }
+  .para-feedback.good{ background:#F1FDCE; color:#2E4A1E; }
+  .para-feedback.bad{ background:#FFF0F0; color:#7A2E2E; }
+  .para-next{ display:none; margin-top:0.9rem; }
+  .para-next.show{ display:inline-flex; }
+  .para-result{ text-align:center; padding:0.5rem 0 0.2rem; }
+  .para-score{ font-size:2.4rem; font-weight:800; color:var(--navy); margin:0.25rem 0; }
+  .para-result-msg{ color:var(--text-muted); font-size:0.92rem; margin:0 0 1rem; }
+  .para-review{ text-align:left; margin-top:1rem; border-top:1px solid var(--border); }
+  .para-review-item{ padding:0.8rem 0; border-bottom:1px solid var(--border); font-size:0.9rem; }
+  .para-review-item:last-child{ border-bottom:none; }
+  .para-review-status{ font-weight:700; margin-top:0.25rem; }
+  .para-review-status.ok{ color:#2E4A1E; }
+  .para-review-status.no{ color:#7A2E2E; }
+
+  .chunk-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+  .chunk-card { width:100%; text-align:left; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:14px; color:var(--ink); cursor:pointer; }
+  .chunk-card:hover { border-color:var(--accent); }
+  .chunk-number { display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; border-radius:50%; background:var(--accent); color:#fff; font-weight:700; font-size:.82rem; margin-right:8px; }
+  .chunk-text { display:inline; font-weight:600; line-height:1.5; }
+  .chunk-reveal { display:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); color:var(--accent-dark); font-size:.9rem; font-weight:600; }
+  .chunk-card.active .chunk-reveal { display:block; }
+
+  /* ---------- Chunking Exercise ---------- */
+  .chunking-instructions{
+    background:var(--ice-soft);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:0.8rem 1rem;
+    margin-bottom:1.1rem;
+  }
+  .chunking-step{
+    display:flex;
+    gap:0.8rem;
+    align-items:flex-start;
+    padding:0.65rem 0;
+  }
+  .chunking-step + .chunking-step{ border-top:1px solid var(--border); }
+  .chunking-step-num{
+    flex:none;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:var(--navy);
+    color:#fff;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.78rem;
+    font-weight:700;
+    margin-top:0.05rem;
+  }
+  .chunking-step strong{ color:var(--navy); }
+  :root[data-theme="dark"] .chunking-step strong{ color:var(--ice); }
+  .chunking-step p{ margin:0.15rem 0 0; font-size:0.9rem; color:var(--text-muted); }
+  .chunking-audio{
+    background:var(--card);
+    border-color:var(--border);
+  }
+  .chunking-label{
+    font-size:0.72rem;
+    font-weight:700;
+    letter-spacing:0.06em;
+    color:var(--navy);
+    margin-bottom:0.65rem;
+  }
+  :root[data-theme="dark"] .chunking-label{ color:var(--ice); }
+  .chunking-prompt{ margin:0 0 0.8rem; color:var(--text-muted); font-size:0.92rem; }
+  .worksheet-table-wrap{ overflow-x:auto; }
+  .worksheet-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.9rem;
+  }
+  .worksheet-table th,
+  .worksheet-table td{
+    border:1px solid var(--border);
+    padding:0.65rem 0.75rem;
+    text-align:left;
+    vertical-align:top;
+  }
+  .worksheet-table th{
+    background:var(--ice-soft);
+    color:var(--navy);
+    font-size:0.78rem;
+    letter-spacing:0.03em;
+  }
+  :root[data-theme="dark"] .worksheet-table th{ color:var(--ice); }
+  .worksheet-table th:first-child,
+  .worksheet-table td:first-child{
+    width:44px;
+    text-align:center;
+    font-weight:700;
+  }
+  .chunk-input{
+    width:100%;
+    min-width:240px;
+    border:none;
+    border-bottom:1px dashed var(--text-muted);
+    background:transparent;
+    color:var(--text);
+    font:inherit;
+    padding:0.25rem 0.1rem;
+  }
+  .chunk-input:focus{
+    outline:none;
+    border-bottom:1.5px solid var(--navy);
+  }
+  :root[data-theme="dark"] .chunk-input:focus{ border-color:var(--ice); }
+  .chunking-actions{
+    display:flex;
+    align-items:center;
+    gap:0.8rem;
+    flex-wrap:wrap;
+    margin:0.9rem 0 1rem;
+  }
+  .chunking-actions .btn[disabled]{
+    opacity:0.45;
+    cursor:not-allowed;
+  }
+  .chunking-progress{
+    color:var(--text-muted);
+    font-size:0.82rem;
+  }
+  #chunkingAnswerCard .answer-box{ margin-top:0; }
+  .answer-table td{ background:var(--good-bg); }
+  .answer-table th{ background:var(--ice-soft); }
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="course-line">HBT102 — Basic Skills in Interpreting</div>
+    <div class="lecture-title">Week 1 · Introduction to Basic Interpreting Skills</div>
+    <div class="course-line" style="margin-top:0.15rem;">Dr. Nor Idatul Akmar Zulkipli</div>
+    <div class="progress-row">
+      <span id="progressLabel">Section 1 of 11</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="quick-nav-wrap">
+  <div class="quick-nav-pill">
+    <span class="quick-nav-icon">📍</span>
+    <select class="quick-nav-select" id="quickNavSelect" aria-label="Jump to section"></select>
+  </div>
+</div>
+
+<div class="page-layout">
+
+<main id="main">
+
+  <!-- 1. WELCOME -->
+  <section class="lecture-section active" id="sec-1">
+    <div class="sec-eyebrow">Section 1 of 11</div>
+    <h2 class="sec-title">Welcome</h2>
+
+    <p class="sec-intro">A gentle first look at what interpreting is, and what this course will help you build.</p>
+    <div class="card">
+      <p style="margin:0;"><strong>Course:</strong> HBT102 — Basic Skills in Interpreting</p>
+    </div>
+
+    <div class="intro-callout">
+      <h4>🎯 What We'll Explore</h4>
+      <p>Today we take our first steps: what interpreting actually is, how it's different from translation, and the basic skills every interpreter builds on.</p>
+    </div>
+  </section>
+
+  <!-- 2. LEARNING OUTCOMES -->
+  <section class="lecture-section" id="sec-2">
+    <div class="sec-eyebrow">Section 2 of 11</div>
+    <h2 class="sec-title">Learning Outcomes</h2>
+    <p class="sec-intro">By the end of this lecture, you should be able to:</p>
+    <div class="card">
+      <ul class="outcome-list">
+        <li>
+          <span class="co-tag">CO1</span>
+          <span class="outcome-text">Explain the key features of spoken language and their relevance to basic interpreting skills.</span>
+        </li>
+        <li>
+          <span class="co-tag">CO2</span>
+          <span class="outcome-text">Analyse spoken language features in context and infer their implications for the interpreting process.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- 4. KEY CONCEPTS -->
+  <section class="lecture-section" id="sec-3">
+    <div class="sec-eyebrow">Section 3 of 11</div>
+    <h2 class="sec-title">Key Concepts</h2>
+    <p class="sec-intro">Click each term to reveal its definition.</p>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Interpreting</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        Turning a spoken (or signed) message from one language into another, in real time — while someone is speaking or right after they pause.
+        <div class="eg">Example: at a hospital, a nurse speaks English and the interpreter says it in Malay so the patient understands.</div>
+      </div></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Translating</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        Turning a <strong>written</strong> text from one language into another, with time to check, revise, and use a dictionary or software.
+      </div></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Consecutive Interpreting</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        The speaker pauses after a segment of speech; the interpreter then renders that segment in the target language, often supported by short notes.
+        <div class="eg">Common in press conferences, small meetings, and legal proceedings.</div>
+      </div></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Simultaneous Interpreting</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        The interpreter renders the message into the target language almost immediately, while the speaker keeps talking — typically from a booth, using headsets.
+        <div class="eg">Common in conferences and international summits.</div>
+      </div></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Sight Translation</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        Reading a written text in the source language and rendering it orally into the target language on the spot, without advance preparation.
+      </div></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Chunking</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        Breaking an utterance into smaller meaningful units before rendering it, instead of processing it word by word.
+        <div class="eg">We'll practise this in the Worked Example below.</div>
+      </div></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Impartiality</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        Staying strictly neutral and rendering the message faithfully — without adding, omitting, or editorialising based on personal opinion.
+      </div></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-trigger"><span>Active Listening</span><span class="arrow">▾</span></button>
+      <div class="accordion-panel"><div class="accordion-panel-inner">
+        Listening for tone, intent, and unsaid context — not just the individual words — so the interpreted message carries the same meaning and effect.
+      </div></div>
+    </div>
+
+    <h3 class="subhead">The Basic Interpreting Process</h3>
+    <p class="sec-intro" style="margin-bottom:0.8rem;">Click each step to see what it means.</p>
+    <div class="process-row" id="processRow"></div>
+    <div class="process-explain" id="processExplain"></div>
+  </section>
+
+  <!-- 5. EXPLANATION: TRANSLATOR VS INTERPRETER -->
+  <section class="lecture-section" id="sec-4">
+    <div class="sec-eyebrow">Section 4 of 11</div>
+    <h2 class="sec-title">Explanation: Translator vs Interpreter</h2>
+    <p class="sec-intro">A closer look at how the two professions differ.</p>
+    <div class="card">
+      <ul class="plain-list">
+        <li><strong>Medium:</strong>&nbsp;a translator works with books, websites, and documents. An interpreter works with live speech — meetings, conferences, hearings.</li>
+        <li><strong>Time:</strong>&nbsp;a translator has time to research and revise. An interpreter must respond instantly, with no time to look anything up.</li>
+        <li><strong>Tools:</strong>&nbsp;a translator relies on dictionaries and software. An interpreter relies mainly on memory, quick reflexes, and listening skill.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h4>💡 Key Points</h4>
+      <p>Translating works with written text and allows revision; interpreting works with live speech in <strong>real time</strong>. Both need bilingual fluency, but interpreting additionally demands <strong>memory</strong>, <strong>composure</strong>, and <strong>instant recall</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 6. SKILLS NEEDED -->
+  <section class="lecture-section" id="sec-5">
+    <div class="sec-eyebrow">Section 5 of 11</div>
+    <h2 class="sec-title">Skills Needed</h2>
+    <p class="sec-intro">Interpreters draw on two kinds of skill. Switch between them, then click a skill for more detail.</p>
+
+    <div class="toggle-switch" role="tablist" aria-label="Skill type">
+      <button class="toggle-btn active" data-list="hard" role="tab" aria-selected="true">Hard Skills</button>
+      <button class="toggle-btn" data-list="soft" role="tab" aria-selected="false">Soft Skills</button>
+    </div>
+
+    <div class="toggle-list" id="skillsList"></div>
+  </section>
+
+  <!-- 7. BUILDING YOUR INTERPRETING SKILLS -->
+  <section class="lecture-section" id="sec-6">
+    <div class="sec-eyebrow">Section 6 of 11</div>
+    <h2 class="sec-title">Building Your Interpreting Skills</h2>
+    <p class="sec-intro">Interpreting skills develop through deliberate practice. Here are a few techniques you can start using from the very beginning.</p>
+
+    <div class="card" style="background:#FFF8F0; border-color:#F2D2B4;">
+      <h3 class="subhead" style="margin-top:0;">🎧 Shadowing Practice</h3>
+      <p>Listen to the speaker and repeat the message aloud, trying to follow the speaker's pace, rhythm and intonation.</p>
+
+      <div style="margin:1rem 0 1.25rem; border-radius:12px; overflow:hidden; background:#111;">
+        <video controls preload="metadata" style="display:block; width:100%; max-height:420px;" aria-label="Shadowing practice video">
+          <source src="media/shadowing.mp4" type="video/mp4">
+          Your browser does not support the video element.
+        </video>
+      </div>
+
+      <div class="callout" style="margin-top:1rem;">
+        <h4>💭 Self-Check</h4>
+        <ul class="plain-list">
+          <li>Did I manage to keep up with the speaker?</li>
+          <li>Where did I fall behind?</li>
+          <li>Which words or phrases were difficult to say?</li>
+          <li>Did I maintain the speaker's rhythm and intonation?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CHUNKING EXERCISE -->
+  <section class="lecture-section" id="sec-7">
+    <div class="sec-eyebrow">Section 7 of 11</div>
+    <h2 class="sec-title">Chunking Exercise</h2>
+    <p class="sec-intro">Listen to the message and write down each meaningful chunk in the order you hear it.</p>
+
+    <div class="chunking-instructions">
+      <div class="chunking-step">
+        <span class="chunking-step-num">1</span>
+        <div>
+          <strong>Listen first.</strong>
+          <p>Press play and listen to the audio. Pause after each short chunk.</p>
+        </div>
+      </div>
+      <div class="chunking-step">
+        <span class="chunking-step-num">2</span>
+        <div>
+          <strong>Write what you hear.</strong>
+          <p>Write down each chunk in the blank space. Replay a chunk as many times as you need.</p>
+        </div>
+      </div>
+      <div class="chunking-step">
+        <span class="chunking-step-num">3</span>
+        <div>
+          <strong>Check yourself.</strong>
+          <p>Complete all 10 blanks before revealing the answer key.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chunking-audio card">
+      <div class="chunking-label">🎧 AUDIO</div>
+      <audio controls preload="metadata" style="width:100%;">
+        <source src="media/listening.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <div class="chunking-worksheet card">
+      <div class="chunking-label">STUDENT WORKSHEET</div>
+      <p class="chunking-prompt">Write down exactly what you hear for each chunk.</p>
+      <div class="worksheet-table-wrap">
+        <table class="worksheet-table">
+          <thead>
+            <tr><th>#</th><th>Write down what you hear</th></tr>
+          </thead>
+          <tbody id="chunkingStudentBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chunking-actions">
+      <button class="btn" id="chunkingAnswerBtn" disabled>Show Answer Key</button>
+      <span class="chunking-progress" id="chunkingProgress">Fill in all 10 blanks to unlock the answer key (0/10 done)</span>
+    </div>
+
+    <div class="reveal-target" id="chunkingAnswerCard">
+      <div class="answer-box">
+        <span class="label">ANSWER KEY — SUGGESTED CHUNKS</span>
+        <div class="worksheet-table-wrap">
+          <table class="worksheet-table answer-table">
+            <thead>
+              <tr><th>#</th><th>Chunk</th></tr>
+            </thead>
+            <tbody id="chunkingAnswerBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- 10. PARAPHRASING -->
+  <section class="lecture-section" id="sec-8">
+    <div class="sec-eyebrow">Section 8 of 11</div>
+    <h2 class="sec-title">Paraphrasing Quiz</h2>
+    <p class="sec-intro">Choose the paraphrase that most accurately preserves the meaning of the original sentence.</p>
+
+    <div class="para-quiz-wrap" id="paraQuiz">
+      <div class="para-progress-row">
+        <span class="para-progress-label" id="paraProgressLabel">Question 1 of 5</span>
+        <span class="para-progress-label" id="paraScoreLabel">Score: 0</span>
+      </div>
+      <div class="para-progress-track"><div class="para-progress-fill" id="paraProgressFill"></div></div>
+      <div class="para-quiz-card" id="paraQuizCard"></div>
+    </div>
+  </section>
+
+  <!-- 11. STARTING YOUR CAREER -->
+
+<!-- 9. INTERACTIVE QUIZ -->
+  <section class="lecture-section" id="sec-9">
+    <div class="sec-eyebrow">Section 9 of 11</div>
+    <h2 class="sec-title">Interactive Quiz</h2>
+    <p class="sec-intro">Five scenario-based questions. Choose an answer to see immediate feedback.</p>
+
+    <div class="quiz-card" id="quizCard"></div>
+  </section>
+
+  <!-- 10. KEY TAKEAWAYS -->
+  <section class="lecture-section" id="sec-10">
+    <div class="sec-eyebrow">Section 10 of 11</div>
+    <h2 class="sec-title">Key Points</h2>
+    <div class="callout">
+      <h4>💡 Key Points</h4>
+      <ul class="takeaway-list">
+        <li>Interpreting works with live spoken language; translation works with written text and allows time to revise.</li>
+        <li>Every interpreter relies on five basic skills: listening, understanding, remembering, reformulating, and delivering.</li>
+        <li>Small details — like a time or a room number — can completely change the message if missed.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 11. WRAP-UP -->
+  <section class="lecture-section" id="sec-11">
+    <div class="sec-eyebrow">Section 11 of 11</div>
+    <h2 class="sec-title">Wrap-Up</h2>
+
+    <h3 class="subhead">What you should now be able to do:</h3>
+    <div class="card" style="background:#F1FDCE; border-color:#DDEBA0;">
+      <ul class="takeaway-list">
+        <li>Explain why interpreting requires more than simply replacing words from one language with another.</li>
+        <li>Identify key skills that support effective interpreting, including listening, memory, reformulation and delivery.</li>
+        <li>Use shadowing to practise keeping pace with a speaker while maintaining rhythm and intonation.</li>
+        <li>Use word chunking to organise a message into meaningful units before rendering it.</li>
+        <li>Paraphrase a message while preserving its original meaning.</li>
+      </ul>
+    </div>
+
+    <h3 class="subhead">💬 How did it go?</h3>
+    <div class="confidence-row" id="confidenceRow"></div>
+    <div class="reveal-target" id="confidenceFeedback">
+      <div class="answer-box">
+        <p id="confidenceFeedbackMsg" style="margin:0;"></p>
+      </div>
+    </div>
+
+    <div class="next-class-card">
+      <div class="icon">📅</div>
+      <div>
+        <div class="label">NEXT CLASS</div>
+        <p>See you in <strong>Week 2</strong>! 👋 We'll build on these skills with Spoken Language Features.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="step-nav">
+    <button class="btn secondary" id="prevBtn">← Previous</button>
+    <button class="btn" id="nextBtn">Next →</button>
+  </div>
+
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Section navigation ---------------- */
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.lecture-section'));
+  var current = 0;
+  var progressFill = document.getElementById('progressFill');
+  var progressLabel = document.getElementById('progressLabel');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+
+  function goTo(index){
+    if(index < 0 || index >= sections.length) return;
+    sections[current].classList.remove('active');
+    current = index;
+    sections[current].classList.add('active');
+    var pct = Math.round(((current + 1) / sections.length) * 100);
+    progressFill.style.width = pct + '%';
+    progressLabel.textContent = 'Section ' + (current + 1) + ' of ' + sections.length;
+    prevBtn.disabled = current === 0;
+    nextBtn.textContent = current === sections.length - 1 ? 'Complete Week 1' : 'Next →';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateTocActive();
+  }
+
+  prevBtn.addEventListener('click', function(){ goTo(current - 1); });
+  nextBtn.addEventListener('click', function(){
+    if(current === sections.length - 1){
+      showCompletionPopup();
+    }
+    else { goTo(current + 1); }
+  });
+
+  /* ---------------- Completion popup (small floating tooltip above the button) ---------------- */
+  function showCompletionPopup(){
+    var existing = document.getElementById('completionPopup');
+    if(existing) existing.remove();
+
+    var popup = document.createElement('div');
+    popup.id = 'completionPopup';
+    popup.className = 'completion-popup';
+    popup.textContent = '👏 Well done, keep it up!';
+    nextBtn.parentElement.style.position = 'relative';
+    nextBtn.parentElement.appendChild(popup);
+
+    var btnRect = nextBtn.getBoundingClientRect();
+    var parentRect = nextBtn.parentElement.getBoundingClientRect();
+    popup.style.left = (btnRect.left - parentRect.left + btnRect.width / 2) + 'px';
+
+    requestAnimationFrame(function(){ popup.classList.add('show'); });
+
+    setTimeout(function(){
+      popup.classList.remove('show');
+      setTimeout(function(){ popup.remove(); }, 200);
+    }, 4000);
+  }
+
+  /* ---------------- Quick-navigation dropdown ---------------- */
+  var quickNavSelect = document.getElementById('quickNavSelect');
+
+  sections.forEach(function(sec, i){
+    var opt = document.createElement('option');
+    opt.value = i;
+    var titleEl = sec.querySelector('.sec-title');
+    var title = titleEl ? titleEl.textContent : '';
+    opt.textContent = 'Section ' + (i + 1) + (title ? ' — ' + title : '');
+    quickNavSelect.appendChild(opt);
+  });
+
+  quickNavSelect.addEventListener('change', function(){
+    goTo(parseInt(quickNavSelect.value, 10));
+  });
+
+  function updateTocActive(){
+    quickNavSelect.value = String(current);
+  }
+
+  goTo(0);
+
+  /* ---------------- Accordions ---------------- */
+  document.querySelectorAll('.accordion-trigger').forEach(function(btn){
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', function(){
+      var acc = btn.parentElement;
+      var isOpen = acc.classList.contains('open');
+      acc.classList.toggle('open', !isOpen);
+      btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+
+  /* ---------------- Reveal buttons ---------------- */
+  document.querySelectorAll('.reveal-btn').forEach(function(btn){
+    var originalLabel = btn.textContent;
+    btn.addEventListener('click', function(){
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      var willShow = !target.classList.contains('shown');
+      target.classList.toggle('shown', willShow);
+      btn.textContent = willShow ? 'Hide' : originalLabel;
+    });
+  });
+
+  /* ---------------- Basic interpreting process (click to reveal) ---------------- */
+  var processSteps = [
+    { label: "Listen", text: "Take in the full message before reacting — don't start forming a response halfway through." },
+    { label: "Understand", text: "Make sure you've grasped the meaning and intent, not just the individual words." },
+    { label: "Remember", text: "Hold the message in mind (or in short notes) long enough to say it in the other language." },
+    { label: "Reformulate", text: "Put the same meaning into the other language — not word-for-word, but idea-for-idea." },
+    { label: "Deliver", text: "Say it clearly and naturally, as if you were the original speaker." }
+  ];
+  var processRow = document.getElementById('processRow');
+  var processExplain = document.getElementById('processExplain');
+
+  processSteps.forEach(function(step, i){
+    var btn = document.createElement('button');
+    btn.className = 'process-step step-color-' + (i + 1);
+    btn.type = 'button';
+    btn.textContent = step.label;
+    btn.addEventListener('click', function(){
+      processExplain.innerHTML = '<strong>' + step.label + ':</strong> ' + step.text;
+      processExplain.classList.add('shown');
+    });
+    processRow.appendChild(btn);
+    if(i < processSteps.length - 1){
+      var arrow = document.createElement('span');
+      arrow.className = 'process-arrow';
+      arrow.textContent = '→';
+      arrow.setAttribute('aria-hidden', 'true');
+      processRow.appendChild(arrow);
+    }
+  });
+
+  /* ---------------- Skills toggle switch + toggle list ---------------- */
+  var skillsData = {
+    hard: [
+      { name: "Language Proficiency", detail: "Deep knowledge of grammar, vocabulary, and local idioms in both the source and target language — not just everyday conversational fluency." },
+      { name: "Interpretation Modes", detail: "Being able to move between simultaneous, consecutive, and sight translation depending on the setting." },
+      { name: "Note-Taking", detail: "A fast, structured way of jotting down key points (names, numbers, logical links) to support memory during longer consecutive segments." },
+      { name: "Technical Literacy", detail: "Comfort with the practical setup interpreters now often work in: video meeting platforms, headsets, and booth equipment." }
+    ],
+    soft: [
+      { name: "Active Listening", detail: "Catching tone, intent, and unsaid context — not just the individual words — so the interpreted message has the same effect on the listener." },
+      { name: "Cultural Awareness", detail: "Understanding customs, non-verbal cues, and social norms well enough to avoid accidentally causing offence or confusion." },
+      { name: "Impartiality", detail: "Staying strictly neutral: rendering the message faithfully, without softening it, editorialising, or adding a personal opinion." },
+      { name: "Memory & Quick Thinking", detail: "Holding a phrase or idea in mind just long enough to render it accurately, while already listening to what comes next." }
+    ]
+  };
+
+  var currentSkillList = 'hard';
+  var skillsListEl = document.getElementById('skillsList');
+  var toggleBtns = document.querySelectorAll('.toggle-btn');
+
+  function renderSkillsList(){
+    skillsListEl.innerHTML = '';
+    skillsData[currentSkillList].forEach(function(skill){
+      var item = document.createElement('div');
+      item.className = 'toggle-item';
+      item.innerHTML =
+        '<button class="toggle-item-trigger" aria-expanded="false">' +
+          '<span class="name">' + skill.name + '</span>' +
+          '<span class="arrow">▾</span>' +
+        '</button>' +
+        '<div class="toggle-item-panel"><div class="toggle-item-panel-inner">' + skill.detail + '</div></div>';
+      var trigger = item.querySelector('.toggle-item-trigger');
+      trigger.addEventListener('click', function(){
+        var isOpen = item.classList.contains('open');
+        item.classList.toggle('open', !isOpen);
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+      });
+      skillsListEl.appendChild(item);
+    });
+  }
+
+  toggleBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      toggleBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      currentSkillList = btn.getAttribute('data-list');
+      renderSkillsList();
+    });
+  });
+
+  renderSkillsList();
+
+  /* ---------------- Paraphrasing quiz ---------------- */
+  (function(){
+    var questions=[
+      {prompt:"The melting of glaciers in Nepal has accelerated in recent years, alarming scientists worldwide.",options:["Scientists around the world are relieved that the pace of glacier melting in Nepal has slowed down recently.","Scientists around the world are concerned because Nepal's glaciers have been melting at a quicker pace lately."],correct:1,explanation:"Accelerated means getting faster, while alarming means causing concern. The original meaning is that the melting rate has increased and scientists are worried."},
+      {prompt:"As glacial lakes swell, the threat of a sudden, destructive flood grows more real for communities downstream.",options:["Communities living downstream face a growing danger of flooding as the lakes continue to expand.","Communities living downstream have less to worry about now that the lakes are shrinking."],correct:0,explanation:"Swell means to expand or grow larger, and the growing threat means the danger is becoming more likely."},
+      {prompt:"Millions of people rely on glacier-fed rivers for their water needs, making this a crisis with far-reaching consequences.",options:["Because only a small number of people use these rivers, the crisis is expected to stay localized.","Because so many people depend on these rivers for water, the effects of this crisis extend well beyond the immediate area."],correct:1,explanation:"Millions of people rely on these rivers, so the consequences of the crisis extend well beyond the immediate area."},
+      {prompt:"Local authorities are racing to install early-warning systems before the situation worsens further.",options:["Officials have chosen not to prioritize warning systems, believing the situation will not worsen.","Officials are moving quickly to put warning systems in place ahead of any further deterioration."],correct:1,explanation:"Racing to install means moving quickly to set something up, while before the situation worsens means before things get worse."},
+      {prompt:"Climate experts stress that without urgent global action, such disasters will only become more frequent.",options:["According to climate experts, these disasters will keep increasing unless the world takes swift action.","According to climate experts, these disasters are unlikely to recur even without significant global action."],correct:0,explanation:"The original sentence says that urgent action is needed to prevent these disasters from becoming more frequent."}
+    ];
+    var current=0,score=0,answered=false,answers=[];
+    var card=document.getElementById('paraQuizCard'),progress=document.getElementById('paraProgressFill'),progressLabel=document.getElementById('paraProgressLabel'),scoreLabel=document.getElementById('paraScoreLabel');
+    function render(){
+      answered=false; var q=questions[current]; progress.style.width=((current/questions.length)*100)+'%'; progressLabel.textContent='Question '+(current+1)+' of '+questions.length; scoreLabel.textContent='Score: '+score;
+      var html='<div class="para-question-number">Q'+(current+1)+'</div><div class="para-source"><span class="tag">ORIGINAL SENTENCE</span><p>'+q.prompt+'</p></div><p class="para-instruction">Choose the option that keeps the original meaning unchanged.</p><div class="para-options">';
+      q.options.forEach(function(opt,i){html+='<button type="button" data-option="'+i+'">'+String.fromCharCode(97+i)+') '+opt+'</button>';});
+      html+='</div><div class="para-feedback" id="paraFeedback" aria-live="polite"></div><button type="button" class="btn para-next" id="paraNext">'+(current===questions.length-1?'See Results':'Next Question')+' →</button>';
+      card.innerHTML=html; card.querySelectorAll('.para-options button').forEach(function(btn){btn.addEventListener('click',function(){select(parseInt(btn.getAttribute('data-option'),10));});}); card.querySelector('#paraNext').addEventListener('click',next);
+    }
+    function select(i){
+      if(answered)return; answered=true; var q=questions[current],buttons=card.querySelectorAll('.para-options button'),correct=i===q.correct; if(correct)score++; answers.push(correct); buttons.forEach(function(b){b.disabled=true;}); buttons[i].classList.add(correct?'correct':'incorrect'); if(!correct)buttons[q.correct].classList.add('correct');
+      var fb=card.querySelector('#paraFeedback'); fb.className='para-feedback show '+(correct?'good':'bad'); fb.innerHTML='<strong>'+(correct?'✅ Correct.':'❌ Not quite.')+'</strong> '+q.explanation; card.querySelector('#paraNext').classList.add('show'); scoreLabel.textContent='Score: '+score;
+    }
+    function next(){current++; if(current<questions.length)render(); else result();}
+    function result(){
+      progress.style.width='100%'; progressLabel.textContent='Quiz complete'; scoreLabel.textContent='Score: '+score; var pct=score/questions.length; var msg=pct===1?'Excellent! You preserved the original meanings accurately.':pct>=0.6?'Good work. Review the items you missed and focus on the overall meaning.':'Have another go. Focus on meaning rather than matching individual words.';
+      var review='<div class="para-review">'; questions.forEach(function(q,i){review+='<div class="para-review-item"><div><strong>Q'+(i+1)+'.</strong> '+q.prompt+'</div><div class="para-review-status '+(answers[i]?'ok':'no')+'">'+(answers[i]?'✓ Correct':'✗ Review this question')+'</div></div>';}); review+='</div>';
+      card.innerHTML='<div class="para-result"><div class="para-question-number">RESULTS</div><div class="para-score">'+score+' / '+questions.length+'</div><p class="para-result-msg">'+msg+'</p><button type="button" class="btn" id="paraRestart">↻ Try Again</button></div>'+review; card.querySelector('#paraRestart').addEventListener('click',function(){current=0;score=0;answers=[];render();});
+    }
+    render();
+  })();
+
+
+  /* ---------------- Chunking Exercise (Section 9) ---------------- */
+  (function(){
+    var chunks = [
+      "Malaysia is implementing",
+      "the Refugee Registration Document programme",
+      "to obtain more accurate and verifiable",
+      "identity and biometric data",
+      "on refugees.",
+      "The programme is managed",
+      "by the Home Ministry",
+      "through the Immigration Department",
+      "as part of efforts",
+      "to improve refugee management and national security."
+    ];
+
+    var studentBody = document.getElementById('chunkingStudentBody');
+    var answerBody = document.getElementById('chunkingAnswerBody');
+    var answerBtn = document.getElementById('chunkingAnswerBtn');
+    var progress = document.getElementById('chunkingProgress');
+    var answerCard = document.getElementById('chunkingAnswerCard');
+
+    chunks.forEach(function(chunk, i){
+      var row = document.createElement('tr');
+      row.innerHTML =
+        '<td>' + (i + 1) + '</td>' +
+        '<td><input class="chunk-input" type="text" data-index="' + i + '" placeholder="Type what you heard..." aria-label="Chunk ' + (i + 1) + '"></td>';
+      studentBody.appendChild(row);
+
+      var answerRow = document.createElement('tr');
+      answerRow.innerHTML = '<td>' + (i + 1) + '</td><td>' + chunk + '</td>';
+      answerBody.appendChild(answerRow);
+    });
+
+    function updateChunkProgress(){
+      var inputs = Array.prototype.slice.call(document.querySelectorAll('.chunk-input'));
+      var filled = inputs.filter(function(input){ return input.value.trim().length > 0; }).length;
+      answerBtn.disabled = filled < chunks.length;
+      progress.textContent = filled === chunks.length
+        ? 'All chunks filled in — you can now check the answer key!'
+        : 'Fill in all ' + chunks.length + ' blanks to unlock the answer key (' + filled + '/' + chunks.length + ' done)';
+    }
+
+    studentBody.addEventListener('input', updateChunkProgress);
+
+    answerBtn.addEventListener('click', function(){
+      var showing = answerCard.classList.toggle('shown');
+      answerBtn.textContent = showing ? 'Hide Answer Key' : 'Show Answer Key';
+      if(showing){
+        answerCard.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }
+    });
+
+    updateChunkProgress();
+  })();
+
+  /* ---------------- Matching activity (Section 12) ---------------- */
+  (function(){
+  var matchPairs = [
+    { term: "Shadowing", def: "Repeating speech aloud with a short delay to build real-time processing" },
+    { term: "Chunking", def: "Breaking an utterance into meaningful units before rendering it" },
+    { term: "Consecutive Interpreting", def: "Rendering the message after the speaker pauses, often using notes" },
+    { term: "Sight Translation", def: "Rendering a written text aloud on the spot, without advance preparation" }
+  ];
+
+  var termListEl = document.getElementById('termList');
+  var dropzoneListEl = document.getElementById('dropzoneList');
+  var checkMatchBtn = document.getElementById('checkMatch');
+  if(!termListEl || !dropzoneListEl || !checkMatchBtn) return;
+  var shuffledDefs = matchPairs.slice().sort(function(){ return Math.random() - 0.5; });
+  var dropzoneState = {};
+
+  matchPairs.forEach(function(pair, i){
+    var chip = document.createElement('div');
+    chip.className = 'term-chip';
+    chip.textContent = pair.term;
+    chip.setAttribute('draggable', 'true');
+    chip.setAttribute('data-term-index', i);
+    chip.setAttribute('tabindex', '0');
+    chip.addEventListener('dragstart', function(e){
+      e.dataTransfer.setData('text/plain', String(i));
+    });
+    termListEl.appendChild(chip);
+  });
+
+  shuffledDefs.forEach(function(pair, dzIndex){
+    var correctTermIndex = matchPairs.indexOf(pair);
+    var zone = document.createElement('div');
+    zone.className = 'dropzone';
+    zone.setAttribute('data-correct', correctTermIndex);
+    zone.setAttribute('data-dz-index', dzIndex);
+
+    var defEl = document.createElement('div');
+    defEl.className = 'def';
+    defEl.textContent = pair.def;
+    zone.appendChild(defEl);
+
+    var select = document.createElement('select');
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Choose a term…';
+    select.appendChild(placeholder);
+    matchPairs.forEach(function(p, ti){
+      var opt = document.createElement('option');
+      opt.value = ti;
+      opt.textContent = p.term;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', function(){
+      assignTerm(dzIndex, select.value === '' ? null : parseInt(select.value, 10));
+    });
+    zone.appendChild(select);
+
+    zone.addEventListener('dragover', function(e){ e.preventDefault(); });
+    zone.addEventListener('drop', function(e){
+      e.preventDefault();
+      var ti = parseInt(e.dataTransfer.getData('text/plain'), 10);
+      assignTerm(dzIndex, ti);
+      select.value = String(ti);
+    });
+
+    dropzoneListEl.appendChild(zone);
+  });
+
+  function assignTerm(dzIndex, termIndex){
+    dropzoneState[dzIndex] = termIndex;
+    var zone = dropzoneListEl.querySelector('[data-dz-index="' + dzIndex + '"]');
+    zone.classList.remove('correct', 'incorrect');
+    var existingLabel = zone.querySelector('.assigned-label');
+    if(existingLabel) existingLabel.remove();
+    if(termIndex !== null){
+      zone.classList.add('filled');
+      var label = document.createElement('div');
+      label.className = 'assigned-label';
+      label.textContent = '→ ' + matchPairs[termIndex].term;
+      zone.insertBefore(label, zone.firstChild);
+    } else {
+      zone.classList.remove('filled');
+    }
+    updateUsedChips();
+  }
+
+  function updateUsedChips(){
+    var usedIndices = Object.keys(dropzoneState).map(function(k){ return dropzoneState[k]; }).filter(function(v){ return v !== null; });
+    termListEl.querySelectorAll('.term-chip').forEach(function(chip){
+      var ti = parseInt(chip.getAttribute('data-term-index'), 10);
+      chip.classList.toggle('used', usedIndices.indexOf(ti) !== -1);
+    });
+  }
+
+  checkMatchBtn.addEventListener('click', function(){
+    var zones = dropzoneListEl.querySelectorAll('.dropzone');
+    var correctCount = 0;
+    zones.forEach(function(zone){
+      var dz = parseInt(zone.getAttribute('data-dz-index'), 10);
+      var correctTerm = parseInt(zone.getAttribute('data-correct'), 10);
+      var chosen = dropzoneState[dz];
+      zone.classList.remove('correct', 'incorrect');
+      if(chosen === correctTerm){
+        zone.classList.add('correct');
+        correctCount++;
+      } else {
+        zone.classList.add('incorrect');
+      }
+    });
+    document.getElementById('matchResult').textContent = correctCount + ' / ' + matchPairs.length + ' correct';
+  });
+  })();
+
+  /* ---------------- Interactive Quiz (Section 9) ---------------- */
+  (function(){
+    var quizData = [
+      {
+        q: "A delegate speaks for a minute, then pauses so the interpreter can render the message before the delegate continues. Which mode is this?",
+        options: ["Simultaneous interpreting", "Consecutive interpreting", "Sight translation", "Translation"],
+        correct: 1,
+        explain: "The pause-then-render pattern is the defining feature of consecutive interpreting."
+      },
+      {
+        q: "An interpreter is handed a written statement moments before a hearing and must render it aloud immediately, without advance preparation. This is:",
+        options: ["Sight translation", "Simultaneous interpreting", "Chunking", "Shadowing"],
+        correct: 0,
+        explain: "Rendering a written text aloud on the spot, without advance preparation, is sight translation."
+      },
+      {
+        q: "Which of the following best demonstrates impartiality in interpreting?",
+        options: [
+          "Softening a rude remark because the interpreter feels it's inappropriate",
+          "Rendering the message faithfully, including its tone, without adding personal opinion",
+          "Explaining to the audience why the speaker is wrong",
+          "Leaving out a detail the interpreter personally disagrees with"
+        ],
+        correct: 1,
+        explain: "Impartiality means the interpreter conveys what was said and how it was said — not their own judgment of it."
+      },
+      {
+        q: "A student listens to a native speaker and repeats what they hear aloud, with only a short delay, to internalise rhythm and pronunciation. This is:",
+        options: ["Chunking", "Simultaneous paraphrasing", "Shadowing", "Sight translation"],
+        correct: 2,
+        explain: "Repeating speech aloud with a brief delay is shadowing — a technique for building real-time processing speed."
+      },
+      {
+        q: "Which of these is NOT typically part of becoming a professional interpreter?",
+        options: [
+          "Completing a professional training program",
+          "Passing written and oral certification exams",
+          "Memorising a bilingual dictionary word-for-word",
+          "Gaining supervised practical experience"
+        ],
+        correct: 2,
+        explain: "Interpreting relies on meaning-based processing, not word-for-word recall — rote dictionary memorisation does not build the skill on its own."
+      }
+    ];
+
+    var quizIndex = 0;
+    var quizScore = 0;
+    var quizCard = document.getElementById('quizCard');
+    if(!quizCard) return;
+
+    function renderQuiz(){
+      if(quizIndex >= quizData.length){
+        quizCard.innerHTML =
+          '<div class="quiz-score">' +
+            '<div class="num">' + quizScore + ' / ' + quizData.length + '</div>' +
+            '<p style="color:var(--text-muted); margin:0.6rem 0 1.2rem;">' + scoreMessage(quizScore) + '</p>' +
+            '<button type="button" class="btn secondary" id="retryQuiz">Try Again</button>' +
+          '</div>';
+        document.getElementById('retryQuiz').addEventListener('click', function(){
+          quizIndex = 0;
+          quizScore = 0;
+          renderQuiz();
+        });
+        return;
+      }
+
+      var item = quizData[quizIndex];
+      var html = '<div class="quiz-progress">Question ' + (quizIndex + 1) + ' of ' + quizData.length + '</div>';
+      html += '<div class="quiz-q">' + item.q + '</div>';
+      html += '<div class="quiz-options">';
+      item.options.forEach(function(opt, i){
+        html += '<button type="button" class="quiz-opt" data-i="' + i + '">' + opt + '</button>';
+      });
+      html += '</div>';
+      html += '<div class="quiz-feedback" id="quizFeedback" aria-live="polite"></div>';
+      html += '<button type="button" class="btn" id="quizNext" style="display:none;">Next Question</button>';
+      quizCard.innerHTML = html;
+
+      var optBtns = Array.prototype.slice.call(quizCard.querySelectorAll('.quiz-opt'));
+      optBtns.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var chosen = parseInt(btn.getAttribute('data-i'), 10);
+          optBtns.forEach(function(b){ b.disabled = true; });
+          var feedback = quizCard.querySelector('#quizFeedback');
+          feedback.classList.add('show');
+          if(chosen === item.correct){
+            btn.classList.add('correct');
+            feedback.classList.add('good');
+            feedback.textContent = '✅ Correct — ' + item.explain;
+            quizScore++;
+          } else {
+            btn.classList.add('incorrect');
+            optBtns[item.correct].classList.add('correct');
+            feedback.classList.add('bad');
+            feedback.textContent = '❌ Not quite — ' + item.explain;
+          }
+          quizCard.querySelector('#quizNext').style.display = 'inline-flex';
+        });
+      });
+
+      quizCard.querySelector('#quizNext').addEventListener('click', function(){
+        quizIndex++;
+        renderQuiz();
+      });
+    }
+
+    function scoreMessage(score){
+      if(score === quizData.length) return "🎉 Excellent — you're ready to move into hands-on practice.";
+      if(score >= quizData.length - 1) return "👏 Almost perfect — review the one you missed before moving on.";
+      if(score >= quizData.length / 2) return "👍 Good start — revisit the Key Concepts section for the ones you missed.";
+      return "📚 Worth revisiting the material before the next class.";
+    }
+
+    renderQuiz();
+  })();
+
+  /* ---------------- Self-check: How did it go? (Section 14) ---------------- */
+  var confidenceOptions = [
+    { emoji: "🌱", label: "Not Yet", message: "That's okay! Keep practising — you'll get there! 💪" },
+    { emoji: "🚶", label: "Getting There", message: "Good progress! Keep practising and refining your skills." },
+    { emoji: "🌟", label: "I Can Do This!", message: "Great job! You're building confidence in your interpreting skills. 🎉" }
+  ];
+  var confidenceRow = document.getElementById('confidenceRow');
+  var confidenceFeedbackBox = document.getElementById('confidenceFeedback');
+  var confidenceFeedbackMsg = document.getElementById('confidenceFeedbackMsg');
+  confidenceOptions.forEach(function(opt){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'confidence-opt';
+    btn.textContent = opt.emoji + ' ' + opt.label;
+    btn.addEventListener('click', function(){
+      confidenceRow.querySelectorAll('.confidence-opt').forEach(function(b){ b.classList.remove('picked'); });
+      btn.classList.add('picked');
+      confidenceFeedbackMsg.innerHTML = '<strong>' + opt.emoji + ' ' + opt.label + '</strong><br>' + opt.message;
+      confidenceFeedbackBox.classList.add('shown');
+    });
+    confidenceRow.appendChild(btn);
+  });
+
+  /* ---------------- Self-check widgets (Try It Yourself) ---------------- */
+  function buildSelfCheck(containerId, feedbacks){
+    var container = document.getElementById(containerId);
+    if(!container) return;
+    var label = document.createElement('div');
+    label.className = 'sc-label';
+    label.textContent = 'How close was your answer to the suggestion above?';
+    container.appendChild(label);
+
+    var row = document.createElement('div');
+    row.className = 'sc-row';
+    container.appendChild(row);
+
+    var feedbackEl = document.createElement('div');
+    feedbackEl.className = 'sc-feedback';
+    container.appendChild(feedbackEl);
+
+    feedbacks.forEach(function(fb){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sc-opt';
+      btn.textContent = fb.label;
+      btn.addEventListener('click', function(){
+        row.querySelectorAll('.sc-opt').forEach(function(b){ b.classList.remove('picked'); });
+        btn.classList.add('picked');
+        feedbackEl.className = 'sc-feedback show ' + fb.tone;
+        feedbackEl.textContent = fb.message;
+      });
+      row.appendChild(btn);
+    });
+  }
+
+  buildSelfCheck('scB', [
+    { label: "Captured the contrast + legal details", tone: "good", message: "✅ Excellent — you flagged the \"Although...\" contrast and kept the treaty years and legal basis precise. That's a complete, accurate rendering." },
+    { label: "Got some of it", tone: "mid", message: "👀 Good start — check whether you kept both the concession (\"Although\") and the exact terms: 1951, 1967, and \"ministerial exemption orders under the Immigration Act.\"" },
+    { label: "Missed most", tone: "low", message: "🔄 That's okay — sight translation takes practice. Re-read the sentence above, and try chunking it before rendering it aloud next time." }
+  ]);
+
+  /* ---------------- Listening activity (real recorded audio) ---------------- */
+  document.querySelectorAll('.listen-btn').forEach(function(btn){
+    var audioEl = document.getElementById(btn.getAttribute('data-audio-target'));
+    var originalLabel = btn.textContent;
+    if(!audioEl) return;
+    btn.addEventListener('click', function(){
+      audioEl.currentTime = 0;
+      var playPromise = audioEl.play();
+      if(playPromise && playPromise.catch){
+        playPromise.catch(function(){
+          btn.textContent = 'Could not play audio — try again';
+        });
+      }
+    });
+    audioEl.addEventListener('play', function(){
+      btn.classList.add('playing');
+      btn.textContent = '🔊 Playing…';
+    });
+    audioEl.addEventListener('ended', function(){
+      btn.classList.remove('playing');
+      btn.textContent = originalLabel;
+    });
+    audioEl.addEventListener('pause', function(){
+      btn.classList.remove('playing');
+      btn.textContent = originalLabel;
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
